@@ -1,0 +1,12 @@
+# https://developers.home-assistant.io/docs/add-ons/configuration#add-on-dockerfile
+build_from:
+  aarch64: ghcr.io/hassio-addons/base/aarch64:14.0.1
+  amd64: ghcr.io/hassio-addons/base/amd64:14.0.1
+  armhf: ghcr.io/hassio-addons/base/armhf:14.0.1
+  armv7: ghcr.io/hassio-addons/base/armv7:14.0.1
+  i386: ghcr.io/hassio-addons/base/i386:14.0.1
+labels:
+  org.opencontainers.image.title: "Home Assistant Add-on: Rsync SSL"
+  org.opencontainers.image.description: "Syncs SSL certs from remote Rsync server."
+  org.opencontainers.image.source: "https://github.com/DmitriySafronov/home-assistant-addons"
+  org.opencontainers.image.licenses: "Apache License 2.0"

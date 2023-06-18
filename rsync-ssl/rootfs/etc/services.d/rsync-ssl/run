@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start the example service
+# s6-overlay docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+##
+bashio::log.info "* Creating CRON configuration..."
+
+# Create cron config
+CRON_DATETIME=$(bashio::config 'cron_datetime')
+CRON_LOGLEVEL=$(bashio::config 'cron_loglevel')
+echo "${CRON_DATETIME} /usr/bin/ssl-refresher" > "/var/spool/cron/crontabs/$(whoami)"
+
+##
+bashio::log.info "* Executing oneshot sync..."
+/usr/bin/ssl-refresher || true
+
+##
+bashio::log.info "* Starting cron daemon..."
+crond -f -d "${CRON_LOGLEVEL}"

@@ -1,0 +1,55 @@
+#!/usr/bin/with-contenv bashio
+
+##
+bashio::log.info "Loading RSYNC configuration..."
+
+# Create main config
+REMOTE_SERVER=$(bashio::config 'rsync_address')
+REMOTE_DIR=$(bashio::config 'rsync_path')
+REMOTE_USER=$(bashio::config 'rsync_login')
+
+SECRET_FILE="$(mktemp)"
+echo "$(bashio::config 'rsync_password')" > "${SECRET_FILE}"
+
+########################
+
+die() {
+  bashio::log.error "$@"
+  exit 1
+}
+
+check_replace_certs() {
+  local CERT_NEW="$1"
+  local CERT_OLD="$2"
+  if [[ ! -f ${CERT_OLD} || -n "$(diff -q ${CERT_OLD} ${CERT_NEW})" ]]; then
+      cp -f "${CERT_NEW}" "${CERT_OLD}"
+      export RESTART_SERVICES=1
+  fi
+}
+
+########################
+########################
+
+RESTART_SERVICES=0
+WORKING_DIR="$(mktemp -d)"
+
+bashio::log.info "Syncing certs..."
+rsync -aL --password-file="${SECRET_FILE}" "${REMOTE_USER}"@"${REMOTE_SERVER}"::"${REMOTE_DIR}/" "${WORKING_DIR}/" || die "Could not rsync"
+
+bashio::log.info "Updating changed certs..."
+check_replace_certs "${WORKING_DIR}/chain.pem" "/ssl/chain.pem" || die "Could not copy chain.pem"
+check_replace_certs "${WORKING_DIR}/fullchain.pem" "/ssl/fullchain.pem" || die "Could not copy fullchain.pem"
+check_replace_certs "${WORKING_DIR}/cert.pem" "/ssl/cert.pem" || die "Could not copy cert.pem"
+check_replace_certs "${WORKING_DIR}/privkey.pem" "/ssl/privkey.pem" || die "Could not copy privkey.pem"
+
+rm -rf "${WORKING_DIR}/"
+rm -rf "${SECRET_FILE}"
+
+########################
+
+if [[ "${RESTART_SERVICES}" == 1 ]]; then
+    bashio::log.info "SSL key or/and cert were changed..."
+    if [[ -x /data/ssl-refresher-success.sh ]]; then
+        /data/ssl-refresher-success.sh &
+    fi
+fi

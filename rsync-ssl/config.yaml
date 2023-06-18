@@ -1,0 +1,29 @@
+name: "Rsync SSL"
+description: "Syncronizing SSL certs from remote server"
+version: "0.0.18"
+slug: "rsync-ssl"
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+  - i386
+startup: before
+map:
+  - ssl:rw
+options:
+  rsync_address: null
+  rsync_path: null
+  rsync_login: null
+  rsync_password: null
+  cron_datetime: null
+  cron_loglevel: 8
+schema:
+  rsync_address: str
+  rsync_path: str
+  rsync_login: str
+  rsync_password: password
+  cron_datetime: str
+  cron_loglevel: int
+image: "ghcr.io/DmitriySafronov/home-assistant-addons/{arch}-rsync-ssl"
