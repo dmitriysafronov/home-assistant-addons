@@ -26,4 +26,4 @@ schema:
   rsync_password: password
   cron_datetime: str
   cron_loglevel: int
-image: "ghcr.io/DmitriySafronov/home-assistant-addons/{arch}-rsync-ssl"
+image: "ghcr.io/DmitriySafronov/{arch}-rsync-ssl"
