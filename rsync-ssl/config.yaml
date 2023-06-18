@@ -9,7 +9,7 @@ arch:
   - armhf
   - armv7
   - i386
-startup: before
+startup: services
 map:
   - ssl:rw
 options:
