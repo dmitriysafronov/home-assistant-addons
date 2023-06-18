@@ -13,7 +13,7 @@ COPY rootfs/ /
 
 # Change access rights
 RUN \
-  chmod -C a+x \
+  chmod -c a+x \
     /usr/bin/ssl-refresher \
     /etc/services.d/rsync-ssl/finish \
     /etc/services.d/rsync-ssl/run
