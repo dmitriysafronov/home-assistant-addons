@@ -1,6 +1,6 @@
 name: "Rsync SSL"
 description: "Syncronizing SSL certs from remote server"
-version: "0.0.19"
+version: "0.1.0"
 slug: "rsync-ssl"
 init: false
 arch:
